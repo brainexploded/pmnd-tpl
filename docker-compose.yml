@@ -1,0 +1,37 @@
+version: "3"
+services:
+  web:
+    image: nginx:1.17-alpine
+    container_name: nginx
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./app:/var/www/app
+      - ./nginx/app.conf:/etc/nginx/conf.d/app.conf
+    depends_on:
+      - php
+
+  php:
+    build: ./php-fpm
+    container_name: php
+    volumes:
+      - ./app:/var/www/app
+      - ./php/php.ini:/usr/local/etc/php/php.ini
+    depends_on:
+      - db
+
+  db:
+    image: mariadb
+    container_name: mariadb
+    volumes:
+      - app_mysqldata:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: lolkekazaza
+      MYSQL_DATABASE: db
+      MYSQL_USER: kek
+      MYSQL_PASSWORD: 4eburek
+    restart: always
+
+volumes:
+  app_mysqldata:
