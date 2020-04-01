@@ -27,10 +27,10 @@ services:
     volumes:
       - app_mysqldata:/var/lib/mysql
     environment:
-      MYSQL_ROOT_PASSWORD: lolkekazaza
-      MYSQL_DATABASE: db
-      MYSQL_USER: kek
-      MYSQL_PASSWORD: 4eburek
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     restart: always
 
 volumes:
