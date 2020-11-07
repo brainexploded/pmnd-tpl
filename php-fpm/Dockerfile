@@ -18,7 +18,8 @@ RUN apk --update add wget \
   libgsasl-dev \
   oniguruma-dev \
   zip \
-  libzip-dev
+  libzip-dev \
+  $PHPIZE_DEPS
 
 RUN docker-php-ext-configure zip
 RUN docker-php-ext-install mysqli mbstring pdo pdo_mysql tokenizer xml zip
@@ -30,7 +31,9 @@ RUN pecl channel-update pecl.php.net \
     && docker-php-ext-enable memcached \
     && docker-php-ext-enable redis \
     && docker-php-ext-enable imagick \
-    && docker-php-ext-enable mcrypt
+    && docker-php-ext-enable mcrypt \
+    && pecl install xdebug-2.9.8 \
+    && docker-php-ext-enable xdebug
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
