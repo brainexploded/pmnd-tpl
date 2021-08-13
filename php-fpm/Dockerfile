@@ -1,4 +1,4 @@
-FROM php:7.4-fpm-alpine
+FROM php:8.0.9-fpm-alpine
 
 RUN apk --update add wget \
   curl \
@@ -27,12 +27,12 @@ RUN pecl channel-update pecl.php.net \
     && pecl install memcached \
     $$ pecl install redis \
     && pecl install imagick \
-    && pecl install mcrypt-1.0.3 \
+    && pecl install mcrypt-1.0.4 \
     && docker-php-ext-enable memcached \
     && docker-php-ext-enable redis \
     && docker-php-ext-enable imagick \
     && docker-php-ext-enable mcrypt \
-    && pecl install xdebug-2.9.8 \
+    && pecl install xdebug-3.0.4 \
     && docker-php-ext-enable xdebug
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
