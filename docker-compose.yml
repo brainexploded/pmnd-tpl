@@ -12,7 +12,9 @@ services:
     depends_on:
       - php
   php:
-    build: ./php-fpm
+    build:
+      context: php-fpm
+      dockerfile: Symfony.Dockerfile
     container_name: php
     volumes:
       - ./app:/var/www/app
