@@ -1,52 +1,61 @@
-version: "3"
 services:
   web:
     image: nginx:1.21.1-alpine
-    container_name: nginx
+    container_name: tpl_nginx
+    env_file: .env
     ports:
-      - 80:80
-      - 443:443
+      - 8082:80
     volumes:
       - ./app:/var/www/app
-      - ./nginx/app.conf:/etc/nginx/conf.d/app.conf
+      - ./nginx/app.conf.template:/etc/nginx/templates/app.conf.template
     depends_on:
       - php
   php:
-    build: ./php-fpm
-    container_name: php
+    build: 
+      context: ./php-fpm
+      target: localdev
+    container_name: tpl_php
+    user: ${WEB_UID}:${WEB_GID}
     volumes:
       - ./app:/var/www/app
       - ./php-fpm/php.ini:/usr/local/etc/php/php.ini
       - ./php-fpm/docker-xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+      - ./php-fpm/supervisord.conf:/etc/supervisord.conf
+      - ./php-fpm/run.sh:/run.sh
     depends_on:
       - db
   db:
     image: mariadb
-    container_name: mariadb
+    container_name: tpl_mariadb
+    env_file: .env
     ports:
     - 3306:3306
     volumes:
-      - app_mysqldata:/var/lib/mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      - tpl_mysqldata:/var/lib/mysql
     restart: always
-  redis:
-    image: "redis:alpine"
-    container_name: redis
-    command: redis-server --requirepass ${REDIS_PASSWORD}
-    ports:
-      - "6379:6379"
-    volumes:
-      - app_redisdata:/var/lib/redis
   adminer:
     image: adminer
-    container_name: adminer
+    container_name: tpl_adminer
     restart: always
     ports:
       - 8080:8080
+
+  rabbitmq:
+    image: rabbitmq:4-management-alpine
+    container_name: tpl_rabbitmq
+    restart: always
+    ports:
+      - 5672:5672
+      - 15672:15672
+  redis:
+    image: redis:alpine
+    container_name: tpl_redis
+    restart: always
+    ports:
+      - 63791:6379
+    command: redis-server
+    volumes: 
+      - tpl_redisdata:/data
 volumes:
-  app_mysqldata:
-  app_redisdata:
+  tpl_mysqldata:
+  tpl_redisdata:
